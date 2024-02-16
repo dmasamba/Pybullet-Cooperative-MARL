@@ -14,7 +14,7 @@ import torch as th
 env = gymnasium.make('pushBox-v0') #render_mode='human'
 
 
-episodes = 5
+episodes = 10
 for episode in range(1, episodes+1):
     obs = env.reset()
     done = False
@@ -25,7 +25,7 @@ for episode in range(1, episodes+1):
         obs, reward, done, truncated, info = env.step(action)
         score += reward
     print('Episode: {} Score: {}'.format(episode, score))
-p.disconnect
+p.disconnect()
 
 # log_path = os.path.join('Training', 'Logs')
 
