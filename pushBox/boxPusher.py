@@ -14,7 +14,7 @@ import torch as th
 env = gymnasium.make('pushBox-v0') #render_mode='human'
 
 
-episodes = 10
+episodes = 20
 for episode in range(1, episodes+1):
     obs = env.reset()
     done = False
