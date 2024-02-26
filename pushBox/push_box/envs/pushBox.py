@@ -1,5 +1,6 @@
 import os
 import math
+import time
 import numpy as np
 from typing import ClassVar
 
@@ -19,10 +20,10 @@ class PushBoxEnv(gymnasium.Env):
      
     def __init__(self):
         # 5 finite actions: nothing, right, left, up, and down
-        # self.action_space = spaces.Box(
-        #     low=np.array([-1,-1], dtype=np.float32),
-        #     high=np.array([1,1], dtype=np.float32))
-        self.action_space = spaces.Discrete(5)
+        self.action_space = spaces.Box(
+            low=np.array([-1,-1], dtype=np.float32),
+            high=np.array([1,1], dtype=np.float32))
+        # self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(10,), dtype=np.float64)
 
         p.connect(p.GUI) #or p.DIRECT for non-graphical version
@@ -56,7 +57,7 @@ class PushBoxEnv(gymnasium.Env):
 
         self.state = self.init_state()
         self.step_count = 0
-        self.maxSteps = 10000
+        self.maxSteps = 500
     
     def init_state(self):
 
@@ -69,17 +70,26 @@ class PushBoxEnv(gymnasium.Env):
         # box_pos_offset = np.concatenate((box_pos_offsetx, box_pos_offsety))
 
         # box_pos = agent_pos + box_pos_offset
+
+        boxVec = np.random.uniform(low=1, high=2, size=2)
+        boxVec = self.rotate_angle(boxVec, np.pi*np.random.uniform(-1, 1))
+        box_pos = agent_pos + boxVec
         # randomize target position
-        box_pos = np.random.uniform(low=-2, high=2, size=2)
+        # box_pos = np.random.uniform(low=-2, high=2, size=2)
         # Randomize box position close to the target
         # target_pos_offsetx = np.random.uniform(low=1, high=3, size=1) * np.random.choice([-1, 1])
         # target_pos_offsety = np.random.uniform(low=1, high=3, size=1) * np.random.choice([-1, 1])
         # target_pos_offset = np.concatenate((target_pos_offsetx, target_pos_offsety))
         # target_pos = box_pos + target_pos_offset
 
+        # angle rotation
+        theta = np.random.uniform(low=-15, high=15, size=1)/2
+        theta = theta*np.pi/180
+
         vecAB = (box_pos-agent_pos)/np.linalg.norm(box_pos-agent_pos)
 
         target_pos = box_pos + vecAB * 2
+        # target_pos = self.rotate_angle(target_pos, theta, box_pos)
 
         # # # +/- x linear positions (distance 2)
         # # Randomize a common position for agent, target, and box along the x-axis
@@ -153,7 +163,26 @@ class PushBoxEnv(gymnasium.Env):
         # self.focus_position, _ = p.getBasePositionAndOrientation(self.agent)
         # p.resetDebugVisualizerCamera(cameraDistance=15.70, cameraYaw=0, cameraPitch=-40, cameraTargetPosition=self.focus_position)
 
+    def rotate_angle(self, xy, radians, origin=(0, 0)):
+        """Rotate a point around a given point.
+        
+        I call this the "high performance" version since we're caching some
+        values that are needed >1 time. It's less readable than the previous
+        function but it's faster.
+        """
+        x, y = xy
+        offset_x, offset_y = origin
+        adjusted_x = (x - offset_x)
+        adjusted_y = (y - offset_y)
+        cos_rad = math.cos(radians)
+        sin_rad = math.sin(radians)
+        qx = offset_x + cos_rad * adjusted_x + sin_rad * adjusted_y
+        qy = offset_y + -sin_rad * adjusted_x + cos_rad * adjusted_y
+
+        return qx, qy
+    
     def step(self, action):
+        time.sleep(1/60)
         self.step_count += 1
         done = False
         #get agent, box and target positions
@@ -171,7 +200,7 @@ class PushBoxEnv(gymnasium.Env):
         # Calculate distance-based reward; if box is going toward target, pos reward; if it's going opposite dir, neg reward
         norm_box_vel = np.linalg.norm(box_vel[:2])
         unit_vec = box_vel / norm_box_vel if norm_box_vel != 0.0 else box_vel # to avoid division by 0
-        box_reward_dist = 0.001 * np.dot(box_vec[:2]/np.linalg.norm(box_vec[:2]), unit_vec)
+        box_reward_dist = 0.01 * np.dot(box_vec[:2]/np.linalg.norm(box_vec[:2]), unit_vec)
         if np.isnan(box_reward_dist):
             box_reward_dist = 0.0 
 
@@ -200,17 +229,17 @@ class PushBoxEnv(gymnasium.Env):
             done = True
 
         # Existential reward penalty
-        # existential_penalty = -0.00001
+        existential_penalty = -0.00001
 
         if (self.step_count >= self.maxSteps):
             self.reset()
             done = True
 
-        reward = box_reward_dist + reward_finding
+        reward = box_reward_dist + reward_finding + existential_penalty
 
         #move agent based on applied velocity
-        self.set_actions(action)
-        # p.applyExternalForce(self.agent, -1, (70*action[0], 70*action[1], 0), p.getBasePositionAndOrientation(self.agent)[0], p.WORLD_FRAME)
+        # self.set_actions(action)
+        p.applyExternalForce(self.agent, -1, (70*action[0], 70*action[1], 0), p.getBasePositionAndOrientation(self.agent)[0], p.WORLD_FRAME)
         p.stepSimulation()
 
         if self.render_mode == 'human':
@@ -222,7 +251,7 @@ class PushBoxEnv(gymnasium.Env):
             reward,
             done,
             False,
-            dict(box_reward_dist=box_reward_dist, reward_finding=reward_finding)
+            dict(box_reward_dist=box_reward_dist, reward_finding=reward_finding, existential_penalty=existential_penalty)
         )
 
     def reset(self, seed=None, options=None):

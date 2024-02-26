@@ -10,6 +10,7 @@ from stable_baselines3.common.callbacks import EvalCallback, StopTrainingOnRewar
 import os
 from typing import Any, Dict
 import torch as th
+import time
 
 env = gymnasium.make('pushBox-v0') #render_mode='human'
 
@@ -21,6 +22,7 @@ for episode in range(1, episodes+1):
     score = 0
     
     while not done:
+        time.sleep(1/180)
         action = env.action_space.sample()
         obs, reward, done, truncated, info = env.step(action)
         score += reward
