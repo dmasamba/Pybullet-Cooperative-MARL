@@ -1,0 +1,187 @@
+CUDA_VISIBLE_DEVICES: 0
+Activating TensorFlow-2.6.2 environment
+Running clusterTrain.py
+pybullet build time: Nov 28 2023 23:48:36
+/home/tmorgan01/anaconda3/envs/dan/lib/python3.11/site-packages/torch/cuda/__init__.py:138: UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 802: system not yet initialized (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:108.)
+  return torch._C._cuda_getDeviceCount() > 0
+Using cpu device
+Logging to Training/clusterResults/clusterLogs/PPO_2
+/home/tmorgan01/anaconda3/envs/dan/lib/python3.11/site-packages/stable_baselines3/common/evaluation.py:67: UserWarning: Evaluation environment is not wrapped with a ``Monitor`` wrapper. This may result in reporting modified episode lengths and rewards, if other wrappers happen to modify these. Consider wrapping environment first with ``Monitor`` wrapper.
+  warnings.warn(
+Eval num_timesteps=1000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 300      |
+|    mean_reward     | -1       |
+| time/              |          |
+|    total_timesteps | 1000     |
+---------------------------------
+New best mean reward!
+Eval num_timesteps=2000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 300      |
+|    mean_reward     | -1       |
+| time/              |          |
+|    total_timesteps | 2000     |
+---------------------------------
+-----------------------------
+| time/              |      |
+|    fps             | 773  |
+|    iterations      | 1    |
+|    time_elapsed    | 2    |
+|    total_timesteps | 2048 |
+-----------------------------
+Eval num_timesteps=3000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+-----------------------------------------
+| eval/                   |             |
+|    mean_ep_length       | 300         |
+|    mean_reward          | -1          |
+| time/                   |             |
+|    total_timesteps      | 3000        |
+| train/                  |             |
+|    approx_kl            | 0.007213286 |
+|    clip_fraction        | 0.0251      |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -2.84       |
+|    explained_variance   | 0.842       |
+|    learning_rate        | 5.46e-05    |
+|    loss                 | 0.00757     |
+|    n_updates            | 10          |
+|    policy_gradient_loss | -0.00476    |
+|    std                  | 1           |
+|    value_loss           | 0.00197     |
+-----------------------------------------
+Eval num_timesteps=4000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 300      |
+|    mean_reward     | -1       |
+| time/              |          |
+|    total_timesteps | 4000     |
+---------------------------------
+-----------------------------
+| time/              |      |
+|    fps             | 670  |
+|    iterations      | 2    |
+|    time_elapsed    | 6    |
+|    total_timesteps | 4096 |
+-----------------------------
+Eval num_timesteps=5000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+------------------------------------------
+| eval/                   |              |
+|    mean_ep_length       | 300          |
+|    mean_reward          | -1           |
+| time/                   |              |
+|    total_timesteps      | 5000         |
+| train/                  |              |
+|    approx_kl            | 0.0059232656 |
+|    clip_fraction        | 0.0531       |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -2.84        |
+|    explained_variance   | 0.837        |
+|    learning_rate        | 7.92e-05     |
+|    loss                 | -0.0102      |
+|    n_updates            | 20           |
+|    policy_gradient_loss | -0.00756     |
+|    std                  | 1            |
+|    value_loss           | 0.00109      |
+------------------------------------------
+Eval num_timesteps=6000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 300      |
+|    mean_reward     | -1       |
+| time/              |          |
+|    total_timesteps | 6000     |
+---------------------------------
+-----------------------------
+| time/              |      |
+|    fps             | 647  |
+|    iterations      | 3    |
+|    time_elapsed    | 9    |
+|    total_timesteps | 6144 |
+-----------------------------
+Eval num_timesteps=7000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+-----------------------------------------
+| eval/                   |             |
+|    mean_ep_length       | 300         |
+|    mean_reward          | -1          |
+| time/                   |             |
+|    total_timesteps      | 7000        |
+| train/                  |             |
+|    approx_kl            | 0.006579071 |
+|    clip_fraction        | 0.0407      |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -2.85       |
+|    explained_variance   | 0.837       |
+|    learning_rate        | 0.000104    |
+|    loss                 | 0.0138      |
+|    n_updates            | 30          |
+|    policy_gradient_loss | -0.00392    |
+|    std                  | 1.01        |
+|    value_loss           | 0.000952    |
+-----------------------------------------
+Eval num_timesteps=8000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 300      |
+|    mean_reward     | -1       |
+| time/              |          |
+|    total_timesteps | 8000     |
+---------------------------------
+-----------------------------
+| time/              |      |
+|    fps             | 636  |
+|    iterations      | 4    |
+|    time_elapsed    | 12   |
+|    total_timesteps | 8192 |
+-----------------------------
+Eval num_timesteps=9000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+-----------------------------------------
+| eval/                   |             |
+|    mean_ep_length       | 300         |
+|    mean_reward          | -1          |
+| time/                   |             |
+|    total_timesteps      | 9000        |
+| train/                  |             |
+|    approx_kl            | 0.005130833 |
+|    clip_fraction        | 0.0335      |
+|    clip_range           | 0.2         |
+|    entropy_loss         | -2.84       |
+|    explained_variance   | 0.823       |
+|    learning_rate        | 0.000128    |
+|    loss                 | -0.00791    |
+|    n_updates            | 40          |
+|    policy_gradient_loss | -0.00412    |
+|    std                  | 0.998       |
+|    value_loss           | 0.00077     |
+-----------------------------------------
+Eval num_timesteps=10000, episode_reward=-1.00 +/- 0.00
+Episode length: 300.00 +/- 0.00
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 300      |
+|    mean_reward     | -1       |
+| time/              |          |
+|    total_timesteps | 10000    |
+---------------------------------
+------------------------------
+| time/              |       |
+|    fps             | 629   |
+|    iterations      | 5     |
+|    time_elapsed    | 16    |
+|    total_timesteps | 10240 |
+------------------------------
+Deactivating TensorFlow-2.6.2 environment
+/var/spool/slurmd/job09099/slurm_script: line 33: deactivate: command not found
+Done.
