@@ -20,7 +20,7 @@ env = DummyVecEnv([lambda: env])
 stop_callback = StopTrainingOnRewardThreshold(reward_threshold = 100, verbose = 1)
 eval_callback = EvalCallback(env, 
                             callback_on_new_best = stop_callback,
-                            eval_freq = 1000, 
+                            eval_freq = 10000, 
                             verbose = 1)
 
 # Learning rate schedule: linearly decreasing from 0.00003 to 0.00015
@@ -35,6 +35,6 @@ model = PPO('MlpPolicy', env, learning_rate=linear_lr, verbose=1, tensorboard_lo
 # train the model
 model.learn(total_timesteps=10000000, callback=eval_callback)
 
-PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_3_10M_15dgr_cylinder')
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_4_10M_15dgr_cylinder')
 
 model.save(PPO_Path)
