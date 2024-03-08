@@ -35,6 +35,6 @@ model = PPO('MlpPolicy', env, learning_rate=linear_lr, verbose=1, tensorboard_lo
 # train the model
 model.learn(total_timesteps=10000000, callback=eval_callback)
 
-PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_4_10M_15dgr_cylinder')
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_5_10M_15dgr_cylinder')
 
 model.save(PPO_Path)
