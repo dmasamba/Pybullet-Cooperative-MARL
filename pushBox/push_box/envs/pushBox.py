@@ -26,7 +26,7 @@ class PushBoxEnv(gymnasium.Env):
         # self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(10,), dtype=np.float64)
 
-        p.connect(p.DIRECT) #or p.DIRECT for non-graphical version
+        p.connect(p.GUI) #or p.DIRECT for non-graphical version
         p.resetSimulation()
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setGravity(0,0,-9.8)
@@ -185,8 +185,8 @@ class PushBoxEnv(gymnasium.Env):
         #     box_pos = np.array([box_x, common_position])
         #     agent_pos = np.array([agent_x, common_position])
 
-        p.resetBasePositionAndOrientation(self.agent, ([agent_pos[0], agent_pos[1], 0.25]), ([0, 0, 0, 1]))
-        p.resetBasePositionAndOrientation(self.box, ([box_pos[0], box_pos[1], 0.5]), [0, 0, 0, 1])
+        p.resetBasePositionAndOrientation(self.agent, ([agent_pos[0], agent_pos[1], 0.15]), ([0, 0, 0, 1]))
+        p.resetBasePositionAndOrientation(self.box, ([box_pos[0], box_pos[1], 0.3]), [0, 0, 0, 1])
         p.resetBasePositionAndOrientation(self.target, ([target_pos[0], target_pos[1], 0.15]), ([0, 0, 0, 1]))
         # self.focus_position, _ = p.getBasePositionAndOrientation(self.agent)
         # p.resetDebugVisualizerCamera(cameraDistance=15.70, cameraYaw=0, cameraPitch=-40, cameraTargetPosition=self.focus_position)
