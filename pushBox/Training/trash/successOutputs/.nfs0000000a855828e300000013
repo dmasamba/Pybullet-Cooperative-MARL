@@ -1,0 +1,8 @@
+CUDA_VISIBLE_DEVICES: 0
+Activating TensorFlow-2.6.2 environment
+Running clusterTrain.py
+pybullet build time: Nov 28 2023 23:48:36
+
+	cannot connect to X server
+
+slurmstepd: error: *** JOB 9098 ON sxm003 CANCELLED AT 2024-03-08T15:51:20 ***
