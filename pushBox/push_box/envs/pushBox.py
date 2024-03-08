@@ -49,15 +49,43 @@ class PushBoxEnv(gymnasium.Env):
         target_pos_offset = np.concatenate((target_pos_offsetx, target_pos_offsety))
         target_pos = box_pos + target_pos_offset
 
-        self.agent = p.loadURDF(os.path.join("cube.urdf"), [agent_pos[0], agent_pos[1], 0.25], [0, 0, 0, 1])
-        self.box = p.loadURDF(os.path.join("box.urdf"), [box_pos[0], box_pos[1], 0.5], [0, 0, 0, 1])
+        # self.agent = p.loadURDF(os.path.join("cube.urdf"), [agent_pos[0], agent_pos[1], 0.25], [0, 0, 0, 1])
+        # self.box = p.loadURDF(os.path.join("box.urdf"), [box_pos[0], box_pos[1], 0.5], [0, 0, 0, 1])
+
+        box_shape = 0.6
+        agent_mass = 1
+        box_mass = 2
+        visualShapeId = -1
+
+        agentId =  p.createCollisionShape(
+            p.GEOM_CYLINDER, radius=0.4, height=0.3)
+        
+        boxId = p.createCollisionShape(
+            p.GEOM_CYLINDER, radius=box_shape, height=box_shape)
+        
+        self.agent = p.createMultiBody(
+            agent_mass,
+            agentId,
+            visualShapeId, 
+            [agent_pos[0], agent_pos[1], 1])
+        
+        self.box = p.createMultiBody(
+            box_mass,
+            boxId,
+            visualShapeId, 
+            [box_pos[0], box_pos[1], 1])
+        
+        p.changeVisualShape(self.agent, -1, rgbaColor=[1, 1, 0, 1])
+        p.changeVisualShape(self.box, -1, rgbaColor=[0.769, 0.537, 0.157, 1])
+        
         self.target = p.loadURDF(os.path.join("sphere2red_nocol.urdf"), [target_pos[0], target_pos[1], 0.15], [0, 0, 0, 1], useFixedBase = True)
+
         self.focus_position, _ = p.getBasePositionAndOrientation(self.agent)
         p.resetDebugVisualizerCamera(cameraDistance=16.50, cameraYaw=0, cameraPitch=-50, cameraTargetPosition=self.focus_position)
 
         self.state = self.init_state()
         self.step_count = 0
-        self.maxSteps = 500
+        self.maxSteps = 300
     
     def init_state(self):
 
@@ -89,7 +117,7 @@ class PushBoxEnv(gymnasium.Env):
         vecAB = (box_pos-agent_pos)/np.linalg.norm(box_pos-agent_pos)
 
         target_pos = box_pos + vecAB * 2
-        # target_pos = self.rotate_angle(target_pos, theta, box_pos)
+        target_pos = self.rotate_angle(target_pos, theta, box_pos)
 
         # # # +/- x linear positions (distance 2)
         # # Randomize a common position for agent, target, and box along the x-axis
@@ -182,7 +210,7 @@ class PushBoxEnv(gymnasium.Env):
         return qx, qy
     
     def step(self, action):
-        time.sleep(1/60)
+        # time.sleep(1/60)
         self.step_count += 1
         done = False
         #get agent, box and target positions
@@ -229,7 +257,7 @@ class PushBoxEnv(gymnasium.Env):
             done = True
 
         # Existential reward penalty
-        existential_penalty = -0.00001
+        existential_penalty = -1/self.maxSteps
 
         if (self.step_count >= self.maxSteps):
             self.reset()
@@ -239,7 +267,7 @@ class PushBoxEnv(gymnasium.Env):
 
         #move agent based on applied velocity
         # self.set_actions(action)
-        p.applyExternalForce(self.agent, -1, (70*action[0], 70*action[1], 0), p.getBasePositionAndOrientation(self.agent)[0], p.WORLD_FRAME)
+        p.applyExternalForce(self.agent, -1, [70*action[0], 70*action[1], 0], p.getBasePositionAndOrientation(self.agent)[0], p.WORLD_FRAME)
         p.stepSimulation()
 
         if self.render_mode == 'human':

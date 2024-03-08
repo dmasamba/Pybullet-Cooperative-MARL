@@ -15,19 +15,19 @@ import time
 env = gymnasium.make('pushBox-v0') #render_mode='human'
 
 
-episodes = 20
+episodes = 10
 for episode in range(1, episodes+1):
     obs = env.reset()
     done = False
     score = 0
     
     while not done:
-        time.sleep(1/180)
+        time.sleep(1/240)
         action = env.action_space.sample()
         obs, reward, done, truncated, info = env.step(action)
         score += reward
     print('Episode: {} Score: {}'.format(episode, score))
-p.disconnect()
+# p.disconnect()
 
 # log_path = os.path.join('Training', 'Logs')
 
