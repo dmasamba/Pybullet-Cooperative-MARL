@@ -49,11 +49,8 @@ class PushBoxEnv(gymnasium.Env):
         target_pos_offset = np.concatenate((target_pos_offsetx, target_pos_offsety))
         target_pos = box_pos + target_pos_offset
 
-        # self.agent = p.loadURDF(os.path.join("cube.urdf"), [agent_pos[0], agent_pos[1], 0.25], [0, 0, 0, 1])
-        # self.box = p.loadURDF(os.path.join("box.urdf"), [box_pos[0], box_pos[1], 0.5], [0, 0, 0, 1])
-
         box_shape = 0.6
-        agent_mass = 1
+        agent_mass = 4
         box_mass = 2
         visualShapeId = -1
 
@@ -61,7 +58,7 @@ class PushBoxEnv(gymnasium.Env):
             p.GEOM_CYLINDER, radius=0.4, height=0.3)
         
         boxId = p.createCollisionShape(
-            p.GEOM_CYLINDER, radius=box_shape, height=box_shape)
+            p.GEOM_CYLINDER, radius=box_shape, height=0.3)
         
         self.agent = p.createMultiBody(
             agent_mass,
@@ -89,26 +86,12 @@ class PushBoxEnv(gymnasium.Env):
     
     def init_state(self):
 
-        # 360 degree linear x and y   
         # # randomize agent position
         agent_pos = np.random.uniform(low=-2, high=2, size=2)
-        # Randomize agent position close to the box
-        # box_pos_offsetx = self.np_random.uniform(low=1, high=3, size=1) * np.random.choice([-1, 1])
-        # box_pos_offsety = self.np_random.uniform(low=1, high=3, size=1) * np.random.choice([-1, 1])
-        # box_pos_offset = np.concatenate((box_pos_offsetx, box_pos_offsety))
-
-        # box_pos = agent_pos + box_pos_offset
 
         boxVec = np.random.uniform(low=1, high=2, size=2)
         boxVec = self.rotate_angle(boxVec, np.pi*np.random.uniform(-1, 1))
         box_pos = agent_pos + boxVec
-        # randomize target position
-        # box_pos = np.random.uniform(low=-2, high=2, size=2)
-        # Randomize box position close to the target
-        # target_pos_offsetx = np.random.uniform(low=1, high=3, size=1) * np.random.choice([-1, 1])
-        # target_pos_offsety = np.random.uniform(low=1, high=3, size=1) * np.random.choice([-1, 1])
-        # target_pos_offset = np.concatenate((target_pos_offsetx, target_pos_offsety))
-        # target_pos = box_pos + target_pos_offset
 
         # angle rotation
         theta = np.random.uniform(low=-15, high=15, size=1)/2
@@ -119,74 +102,9 @@ class PushBoxEnv(gymnasium.Env):
         target_pos = box_pos + vecAB * 2
         target_pos = self.rotate_angle(target_pos, theta, box_pos)
 
-        # # # +/- x linear positions (distance 2)
-        # # Randomize a common position for agent, target, and box along the x-axis
-        # common_position = np.random.uniform(low=-5, high=6, size=1)
-
-        # # Randomize x-offsets for target, box, and agent
-        # sign_change = np.random.choice([-1, 1])
-        # x_offset_target = np.array([6]) * sign_change
-        # x_offset_box = np.array([3]) * sign_change
-        # x_offset_agent = np.array([0]) * sign_change
-
-        # # Calculate the x-positions for target, box, and agent
-        # agent_x = x_offset_agent
-        # box_x = x_offset_box
-        # target_x = x_offset_target
-
-        # # Combine x and y coordinates for agent, target, and box
-        # target_pos = np.array([target_x, common_position])
-        # box_pos = np.array([box_x, common_position])
-        # agent_pos = np.array([agent_x, common_position])
-
-        # # randomize agent, box, and target position on the same line (distance 2)
-
-        # # # +xy linear positions (distance 2)
-        # # Randomly choose the alignment axis (either 'x' or 'y')
-        # alignment_axis = np.random.choice(['x', 'y'])
-
-        # if alignment_axis == 'x':
-        #     # Randomize a common position for agent, target, and box along the x-axis
-        #     common_position = np.random.uniform(low=-5, high=6, size=1)
-
-        #     # Randomize y-offsets for target, box, and agent
-        #     sign_change = np.random.choice([-1, 1])
-        #     y_offset_target = np.array([4]) * sign_change
-        #     y_offset_box = np.array([2]) * sign_change
-        #     y_offset_agent = np.array([0]) * sign_change
-
-        #     # Calculate the y-positions for target, box, and agent
-        #     agent_y = y_offset_agent
-        #     box_y = y_offset_box
-        #     target_y = y_offset_target
-            
-
-        #     # Combine x and y coordinates for agent, target, and box
-        #     target_pos = np.array([common_position, target_y])
-        #     box_pos = np.array([common_position, box_y])
-        #     agent_pos = np.array([common_position, agent_y])
-        # else:  # alignment_axis == 'y'
-        #     # Randomize a common position for agent, target, and box along the y-axis
-        #     common_position = np.random.uniform(low=-5, high=6, size=1)
-
-        #     # Randomize x-offsets for target, box, and agent
-        #     sign_change = np.random.choice([-1, 1])
-        #     x_offset_target = np.array([4]) * sign_change
-        #     x_offset_box = np.array([2]) * sign_change
-        #     x_offset_agent = np.array([0]) * sign_change
-
-        #     # Calculate the x-positions for target, box, and agent
-        #     agent_x = x_offset_agent
-        #     box_x = x_offset_box
-        #     target_x = x_offset_target
-
-        #     # Combine x and y coordinates for agent, target, and box
-        #     target_pos = np.array([target_x, common_position])
-        #     box_pos = np.array([box_x, common_position])
-        #     agent_pos = np.array([agent_x, common_position])
-
+        
         p.resetBasePositionAndOrientation(self.agent, ([agent_pos[0], agent_pos[1], 0.15]), ([0, 0, 0, 1]))
-        p.resetBasePositionAndOrientation(self.box, ([box_pos[0], box_pos[1], 0.3]), [0, 0, 0, 1])
+        p.resetBasePositionAndOrientation(self.box, ([box_pos[0], box_pos[1], 0.15]), [0, 0, 0, 1])
         p.resetBasePositionAndOrientation(self.target, ([target_pos[0], target_pos[1], 0.15]), ([0, 0, 0, 1]))
         # self.focus_position, _ = p.getBasePositionAndOrientation(self.agent)
         # p.resetDebugVisualizerCamera(cameraDistance=15.70, cameraYaw=0, cameraPitch=-40, cameraTargetPosition=self.focus_position)
@@ -210,7 +128,7 @@ class PushBoxEnv(gymnasium.Env):
         return qx, qy
     
     def step(self, action):
-        # time.sleep(1/60)
+        time.sleep(1/60)
         self.step_count += 1
         done = False
         #get agent, box and target positions
@@ -231,22 +149,6 @@ class PushBoxEnv(gymnasium.Env):
         box_reward_dist = 0.01 * np.dot(box_vec[:2]/np.linalg.norm(box_vec[:2]), unit_vec)
         if np.isnan(box_reward_dist):
             box_reward_dist = 0.0 
-
-        # Calculate distance-based reward, if agent is going toward box pos reward if it's going opposite dir, neg reward
-        # norm_agent_vel = np.linalg.norm(agent_vel[:2])
-        # unit_vec = agent_vel / norm_agent_vel if norm_agent_vel != 0.0 else agent_vel # to avoid division by 0
-        # agent_reward_dist = 0.00001 * np.dot(agent_vec[:2]/np.linalg.norm(agent_vec[:2]), unit_vec)
-        # if np.isnan(agent_reward_dist):
-        #     agent_reward_dist = 0.0
-
-        # reward for moving the box
-        # reward_moving = 0.0
-        # current_vel = np.linalg.norm(box_vel)
-        # if current_vel > self.previous_vel:
-        #     reward_moving = 0.005
-        #     self.previous_vel = current_vel
-        #     print('box moved')
-
 
         # Reward the agent if box reaches target
         reward_finding = 0.0
