@@ -1,0 +1,10 @@
+CUDA_VISIBLE_DEVICES: 1
+Activating TensorFlow-2.6.2 environment
+Running clusterTrain.py
+Traceback (most recent call last):
+  File "/home/tmorgan01/SeniorProjectOfficial/Pybullet-Cooperative-MARL/pushBox/clusterTrain.py", line 1, in <module>
+    import gymnasium
+ModuleNotFoundError: No module named 'gymnasium'
+Deactivating TensorFlow-2.6.2 environment
+DeprecationWarning: 'source deactivate' is deprecated. Use 'conda deactivate'.
+Done.
