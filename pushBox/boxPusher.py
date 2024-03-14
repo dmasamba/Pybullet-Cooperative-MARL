@@ -22,7 +22,7 @@ for episode in range(1, episodes+1):
     score = 0
     
     while not done:
-        time.sleep(1/240)
+        # time.sleep(1/240)
         action = env.action_space.sample()
         obs, reward, done, truncated, info = env.step(action)
         score += reward

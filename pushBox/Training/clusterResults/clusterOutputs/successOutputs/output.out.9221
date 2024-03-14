@@ -1,0 +1,10 @@
+CUDA_VISIBLE_DEVICES: 0
+Activating TensorFlow-2.6.2 environment
+Running clusterTrain.py
+Traceback (most recent call last):
+  File "/home/tmorgan01/SeniorProjectOfficial/Pybullet-Cooperative-MARL/pushBox/clusterTrainings/clusterTrain.py", line 2, in <module>
+    import push_box
+ModuleNotFoundError: No module named 'push_box'
+Deactivating TensorFlow-2.6.2 environment
+/var/spool/slurmd/job09221/slurm_script: line 34: deactivate: command not found
+Done.
