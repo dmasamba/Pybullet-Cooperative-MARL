@@ -26,7 +26,7 @@ class PushBoxEnv(gymnasium.Env):
         # self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(10,), dtype=np.float64)
 
-        p.connect(p.GUI) #or p.DIRECT for non-graphical version
+        p.connect(p.DIRECT) #or p.DIRECT for non-graphical version
         p.resetSimulation()
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setGravity(0,0,-9.8)
@@ -128,7 +128,7 @@ class PushBoxEnv(gymnasium.Env):
         return qx, qy
     
     def step(self, action):
-        time.sleep(1/60)
+        # time.sleep(1/60)
         self.step_count += 1
         done = False
         #get agent, box and target positions
