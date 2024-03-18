@@ -82,7 +82,7 @@ class PushBoxEnv(gymnasium.Env):
 
         self.state = self.init_state()
         self.step_count = 0
-        self.maxSteps = 500
+        self.maxSteps = 300
     
     def init_state(self):
 
