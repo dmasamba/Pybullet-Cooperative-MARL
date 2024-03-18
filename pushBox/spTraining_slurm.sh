@@ -15,7 +15,7 @@
 #SBATCH -p sxmq
 
 ### Requested number of gpus
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:2
 
 ### Limit on the total run time of the job allocation.
 #SBATCH --time=100:00:00
