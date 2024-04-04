@@ -1,0 +1,57 @@
+Best Hyperparameters Round 1
+Number of finished trials:  500
+Best trial:
+  Value:  3.3570766666666665
+  Params: 
+    gamma: 0.013677986488883052
+    max_grad_norm: 0.48760691738837075
+    gae_lambda: 0.00227865350965668
+    exponent_n_steps: 3
+    lr: 0.003018643785604957
+    ent_coef: 1.156415243046007e-06
+    ortho_init: False
+    net_arch: tiny
+    activation_fn: tanh
+  User attrs:
+    gamma_: 0.9863220135111169
+    gae_lambda_: 0.9977213464903433
+    n_steps: 8
+    
+ Best Hyperparameters Round 12  
+Number of finished trials:  500
+Best trial:
+  Value:  3.6647996666666667
+  Params: 
+    gamma: 0.0002714139231857044
+    max_grad_norm: 0.390997444835953
+    gae_lambda: 0.011142703221863729
+    exponent_n_steps: 7
+    lr: 8.112609823737515e-05
+    ent_coef: 0.0036360828867499344
+    ortho_init: False
+    net_arch: small
+    activation_fn: tanh
+  User attrs:
+    gamma_: 0.9997285860768143
+    gae_lambda_: 0.9888572967781363
+    n_steps: 128
+    
+    
+run = neptune.init_run(project='dmasamba/optuna-optimizer')
+    
+import neptune
+
+run = neptune.init_run(
+    project="dmasamba/optuna-optimizer",
+    api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZTRhZmJmYi1kYzkxLTQ5NjAtOTM0My0yOWYzMWMzMGI5ZTgifQ==",
+)  # your credentials
+
+params = {"learning_rate": 0.001, "optimizer": "Adam"}
+run["parameters"] = params
+
+for epoch in range(10):
+    run["train/loss"].append(0.9 ** epoch)
+
+run["eval/f1_score"] = 0.66
+
+run.stop()

@@ -15,13 +15,17 @@ from typing import Dict
 import gymnasium
 import push_box
 import optuna
+import neptune
+import neptune.integrations.optuna as npt_utils
 from optuna.pruners import MedianPruner
 from optuna.samplers import TPESampler
+from optuna.integration.tensorboard import TensorBoardCallback
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import EvalCallback
 from stable_baselines3.common.monitor import Monitor
 import torch
 import torch.nn as nn
+import tensorflow as tf
 
 
 N_TRIALS = 500
@@ -41,20 +45,29 @@ DEFAULT_HYPERPARAMS = {
 
 def sample_ppo_params(trial: optuna.Trial) -> Dict[str, Any]:
     """Sampler for PPO hyperparameters."""
-    gamma = 1.0 - trial.suggest_float("gamma", 0.0001, 0.1, log=True)
+    gamma = 1.0 - trial.suggest_float("gamma", 0.0003, 0.2, log=True)
     max_grad_norm = trial.suggest_float("max_grad_norm", 0.3, 5.0, log=True)
-    gae_lambda = 1.0 - trial.suggest_float("gae_lambda", 0.001, 0.2, log=True)
-    n_steps = 2 ** trial.suggest_int("exponent_n_steps", 3, 10)
-    learning_rate = trial.suggest_float("lr", 1e-5, 1, log=True)
+    gae_lambda = 1.0 - trial.suggest_float("gae_lambda", 0.001, 0.1, log=True)
+    n_steps = 2 ** trial.suggest_int("exponent_n_steps", 5, 12)
+    learning_rate = trial.suggest_float("lr", 5e-6, 0.003, log=True)
     ent_coef = trial.suggest_float("ent_coef", 0.00000001, 0.1, log=True)
     ortho_init = trial.suggest_categorical("ortho_init", [False, True])
     net_arch = trial.suggest_categorical("net_arch", ["tiny", "small"])
     activation_fn = trial.suggest_categorical("activation_fn", ["tanh", "relu"])
 
+    # added ourselves
+    batch_size = 2 ** trial.suggest_int("exponent_batch_size", 2, 12)
+    n_epochs = trial.suggest_int("n_epochs", 3, 30, log=True)
+    use_sde = trial.suggest_categorical("use_sde", [False, True])
+
+
     # Display true values.
     trial.set_user_attr("gamma_", gamma)
     trial.set_user_attr("gae_lambda_", gae_lambda)
     trial.set_user_attr("n_steps", n_steps)
+    # added
+    trial.set_user_attr("batch_size", batch_size)
+    trial.set_user_attr("n_epochs", n_epochs)
 
     net_arch = {"pi": [64], "vf": [64]} if net_arch == "tiny" else {"pi": [64, 64], "vf": [64, 64]}
 
@@ -67,10 +80,13 @@ def sample_ppo_params(trial: optuna.Trial) -> Dict[str, Any]:
         "learning_rate": learning_rate,
         "ent_coef": ent_coef,
         "max_grad_norm": max_grad_norm,
+        "batch_size": batch_size,
+        "n_epochs": n_epochs,
+        "use_sde" : use_sde,
         "policy_kwargs": {
             "net_arch": net_arch,
             "activation_fn": activation_fn,
-            "ortho_init": ortho_init,
+            "ortho_init": ortho_init
         },
     }
 
@@ -139,6 +155,7 @@ def objective(trial: optuna.Trial) -> float:
     if nan_encountered:
         return float("nan")
 
+
     if eval_callback.is_pruned:
         raise optuna.exceptions.TrialPruned()
 
@@ -146,8 +163,19 @@ def objective(trial: optuna.Trial) -> float:
 
 
 if __name__ == "__main__":
+    #add tensorboard callback
+    # tensorboard_callback = TensorBoardCallback("Tuning/logs/", metric_name="logs")
+    
+    #add neptune ai to track hyperparameters
+    run = neptune.init_run(
+        project="dmasamba/optuna-optimizer",
+        api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiJkZTRhZmJmYi1kYzkxLTQ5NjAtOTM0My0yOWYzMWMzMGI5ZTgifQ=="
+    )
+
+    neptune_callback = npt_utils.NeptuneCallback(run)
+    
     # Set pytorch num threads to 1 for faster training.
-    torch.set_num_threads(1)
+    torch.set_num_threads(1) # FIXME: Can change this to 52 threads? ----------------------------
 
     sampler = TPESampler(n_startup_trials=N_STARTUP_TRIALS)
     # Do not prune before 1/3 of the max budget is used.
@@ -155,7 +183,7 @@ if __name__ == "__main__":
 
     study = optuna.create_study(sampler=sampler, pruner=pruner, direction="maximize")
     try:
-        study.optimize(objective, n_trials=N_TRIALS, timeout=600)
+        study.optimize(objective, n_trials=N_TRIALS, callbacks=[neptune_callback]) #, timeout=6000 #timing out with timeout=
     except KeyboardInterrupt:
         pass
 
@@ -173,3 +201,5 @@ if __name__ == "__main__":
     print("  User attrs:")
     for key, value in trial.user_attrs.items():
         print("    {}: {}".format(key, value))
+
+    run.stop()
