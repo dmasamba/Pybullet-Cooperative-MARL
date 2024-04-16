@@ -94,7 +94,7 @@ class PushBoxEnv(gymnasium.Env):
         box_pos = agent_pos + boxVec
 
         # angle rotation
-        theta = np.random.uniform(low=-15, high=15, size=1)/2
+        theta = np.random.uniform(low=-30, high=30, size=1)/2
         theta = theta*np.pi/180
 
         vecAB = (box_pos-agent_pos)/np.linalg.norm(box_pos-agent_pos)
