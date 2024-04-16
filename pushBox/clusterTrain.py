@@ -23,26 +23,22 @@ eval_callback = EvalCallback(env,
                             eval_freq = 10000, 
                             verbose = 1)
 
-# Tuned hyperparameters from optuna optimizer round 3
-gamma = 0.0023395703784496024
-max_grad_norm = 1.1818923402292356
-gae_lambda = 0.17410391318934526
-exponent_n_steps = 5
-lr = 0.0004038539267312125
-ent_coef = 0.0010308019410639854
-
-policy_kwargs = dict(ortho_init=True,
-                     activation_fn=th.nn.ReLU,
-                     net_arch=dict(pi=[64], vf=[64]))
+# Learning rate schedule: linearly decreasing from 0.0007 to 0.0001
+def linear_lr(progress_remaining: float):
+    start_lr = 0.00003
+    end_lr = 0.0003
+    return end_lr + (start_lr - end_lr) * progress_remaining
 
 # creating the model
-model = PPO('MlpPolicy', env, learning_rate=lr, n_steps=2**exponent_n_steps, gamma=gamma, gae_lambda=gae_lambda,
-            ent_coef=ent_coef, max_grad_norm=max_grad_norm, policy_kwargs=policy_kwargs,
-            verbose=1, tensorboard_log=log_path)
+model = PPO('MlpPolicy', env, learning_rate=linear_lr, verbose=1, tensorboard_log=log_path)
+
+# load previous model
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_22_10M_15dgr_cylinder')
+model = PPO.load(PPO_Path, env=env)
 
 # train the model
 model.learn(total_timesteps=10000000, callback=eval_callback)
 
-PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_21_10M_15dgr_cylinder')
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_28_10M_15dgr_cylinder')
 
 model.save(PPO_Path)
