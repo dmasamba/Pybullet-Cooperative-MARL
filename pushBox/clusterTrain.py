@@ -33,12 +33,12 @@ def linear_lr(progress_remaining: float):
 model = PPO('MlpPolicy', env, learning_rate=linear_lr, verbose=1, tensorboard_log=log_path)
 
 # load previous model
-PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_22_10M_15dgr_cylinder')
-model = PPO.load(PPO_Path, env=env)
+#PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_22_10M_15dgr_cylinder')
+#model = PPO.load(PPO_Path, env=env)
 
 # train the model
 model.learn(total_timesteps=10000000, callback=eval_callback)
 
-PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_33_10M_30dgr_cylinder')
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_42_10M_30dgr_cylinder')
 
 model.save(PPO_Path)

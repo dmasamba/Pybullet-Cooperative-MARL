@@ -1,6 +1,6 @@
 #!/bin/bash
 ### Sets the job's name.
-#SBATCH --job-name=15dgr_cylinder
+#SBATCH --job-name=30dgr_cylinder
 
 ### Sets the job's output file and path.
 #SBATCH --output=Training/clusterResults/clusterOutputs/successOutputs/output.out.%j
@@ -15,7 +15,7 @@
 #SBATCH -p sxmq
 
 ### Requested number of gpus
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:1
 
 ### Limit on the total run time of the job allocation.
 #SBATCH --time=100:00:00
