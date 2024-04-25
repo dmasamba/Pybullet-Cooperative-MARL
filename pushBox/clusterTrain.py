@@ -25,20 +25,20 @@ eval_callback = EvalCallback(env,
 
 # Learning rate schedule: linearly decreasing from 0.0007 to 0.0001
 def linear_lr(progress_remaining: float):
-    start_lr = 0.00001
-    end_lr = 0.00005
+    start_lr = 0.00004
+    end_lr = 0.0001
     return end_lr + (start_lr - end_lr) * progress_remaining
 
 # creating the model
 model = PPO('MlpPolicy', env, learning_rate=linear_lr, verbose=1, tensorboard_log=log_path)
 
 # load previous model
-#PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_22_10M_15dgr_cylinder')
-#model = PPO.load(PPO_Path, env=env)
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_22_10M_15dgr_cylinder')
+model.load(PPO_Path)
 
 # train the model
 model.learn(total_timesteps=10000000, callback=eval_callback)
 
-PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_42_10M_30dgr_cylinder')
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_43_10M_30dgr_cylinder')
 
 model.save(PPO_Path)
