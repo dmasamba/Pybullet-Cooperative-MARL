@@ -34,11 +34,13 @@ model = PPO('MlpPolicy', env, learning_rate=linear_lr, verbose=1, tensorboard_lo
 
 # load previous model
 PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_22_10M_15dgr_cylinder')
-model.load(PPO_Path)
+# model.load(PPO_Path)
+custom_objects = { 'learning_rate': linear_lr }
+model = PPO.load(PPO_Path, env=env, custom_objects=custom_objects)
 
 # train the model
 model.learn(total_timesteps=10000000, callback=eval_callback)
 
-PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_43_10M_30dgr_cylinder')
+PPO_Path = os.path.join('Training', 'clusterResults', 'clusterSavedModels', 'PPO_55_10M_30dgr_cylinder')
 
 model.save(PPO_Path)
